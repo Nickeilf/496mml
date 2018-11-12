@@ -22,11 +22,10 @@ def f3(X,Y):
     b = np.array([0, -1])
     B = np.array([[3, -1],
                   [-1, 3]])
-    first = 1 - np.exp(-(X-1)**2 - Y**2)
+    first = 1.0 - np.exp(-(X-1)**2 - Y**2)
     second = np.exp(-(3*(X**2) - 2*X*(Y+1) + 3*(Y+1)**2))
-    third = 1/10 * np.log10((X**2 + Y**2)/100 + 1/10000)
-    return first+second+third
-
+    third = -1/10*np.log((X**2 + Y**2)/100.0 + 1.0/10000.0)
+    return first-second-third
 
 def gradient_descend_f2():
     delta = 0.1
@@ -60,21 +59,21 @@ def gradient_descend_f2():
 def gradient_descend_f3():
     delta = 0.1
     iterations = 50
-    gamma = 0.5
+    gamma = 0.1
 
-    x = np.arange(-3, 3, delta)
-    y = np.arange(-3, 3, delta)
+    x = np.arange(-1.5, 1.5, delta)
+    y = np.arange(-1.5, 1.5, delta)
     X, Y = np.meshgrid(x, y)
     Z=f3(X,Y)
     fig, ax = plt.subplots()
-    CS = ax.contour(X, Y, Z, 50)
+    CS = ax.contour(X, Y, Z, 30)
     ax.clabel(CS, inline=1, fontsize=10)
     ax.set_title('Gradient Descent for f3 with iteration={}, gamma={}'.format(iterations,gamma))
     ax.set_xlabel('x1')
     ax.set_ylabel('x2')
 
 
-    X_prev = np.array([-1, -2])
+    X_prev = np.array([1, -1])
     ax.plot(X_prev[0],X_prev[1],color='black',marker='x',markersize=8)
 
 
@@ -116,11 +115,13 @@ def grad_f3(x):
     second = torch.exp(-(x_b.t().mm(B).mm(x_b)))
     third = -1/10 * torch.log(torch.det(eye/100 + input*input.t()))
 
-    f3 = first + second + third
+    f3 = first - second - third
     f3.backward()
     return input.grad.reshape([2])
 
 
 
 if __name__ == '__main__':
+    print(f3(2,1))
+    # f3_2(np.array([[2],[1]]))
     gradient_descend_f3()
